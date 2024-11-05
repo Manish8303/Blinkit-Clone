@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cart Blinkit Clone</title>
+    <link rel="shortcut icon" href="https://blinkit.com/images/faviconChange.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css"> 
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .cart-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cart-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-title {
+            font-weight: bold;
+        }
+
+        .cart-item-price {
+            margin-top: 5px;
+        }
+
+        .cart-total {
+            margin-top: 30px;
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .empty-cart {
+            text-align: center;
+            font-size: 18px;
+            color: #777;
+            margin-top: 50px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .button-clear {
+            background-color: #dc3545;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .notification {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #28a745;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <div class="cart-header">
+            <h2 class="cart-title">My Cart</h2>
+            <button class="button button-clear" onclick="clearCart()">Clear Cart</button>
+        </div>
+
+        <div class="cart-items" id="cart-items-container"></div>
+
+        <div class="cart-total" id="cart-total">Total: ₹0</div>
+
+        <div class="checkout-section">
+            <button class="button" onclick="showPaymentOptions()">Proceed to Checkout</button>
+            <div class="payment-options" id="payment-options" style="display: none;">
+                <button class="button" onclick="placeOrder('Card')">Pay by Card</button>
+                <button class="button" onclick="placeOrder('Cash')">Pay by Cash</button>
+                <button class="button" onclick="placeOrder('Others')">Other Methods</button>
+            </div>
+            <div class="notification" id="notification">Your item will be delivered shortly!</div>
+        </div>
+    </div>
+
+    <script>
+        const cartItemsContainer = document.getElementById('cart-items-container');
+        const cartTotalElement = document.getElementById('cart-total');
+        const notificationElement = document.getElementById('notification');
+        const paymentOptionsElement = document.getElementById('payment-options');
+
+        function displayCartItems() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+            if (cartItems.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
+                cartTotalElement.textContent = 'Total: ₹0';
+                return;
+            }
+
+            cartItemsContainer.innerHTML = '';
+            let totalPrice = 0;
+
+            cartItems.forEach(item => {
+                const cartItemElement = document.createElement('div');
+                cartItemElement.classList.add('cart-item');
+                cartItemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="cart-item-details">
+                        <p class="cart-item-title">${item.title}</p>
+                        <p class="cart-item-price">₹${item.price}</p>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItemElement);
+                totalPrice += item.price * item.quantity;
+            });
+
+            cartTotalElement.textContent = `Total: ₹${totalPrice.toFixed(2)}`;
+        }
+
+      
+        function clearCart() {
+            localStorage.removeItem('cartItems');
+            displayCartItems();
+        }
+
+        
+        function showPaymentOptions() {
+            paymentOptionsElement.style.display = 'flex';
+        }
+
+        
+        function placeOrder(paymentMethod) {
+            notificationElement.textContent = `Your item will be delivered shortly! Payment Method: ${paymentMethod}`;
+            notificationElement.style.display = 'block';
+            setTimeout(() => {
+                notificationElement.style.display = 'none';
+                clearCart();
+            }, 3000);
+        }
+
+        displayCartItems();
+    </script>
+</body>
+</html>
