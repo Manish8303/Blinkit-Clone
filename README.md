@@ -77,4 +77,3 @@ start index.html
 
 ---
 
-Would you like me to save this content directly into a `README.md` file inside the project folder?
